@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 
-public Class User {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -51,7 +51,7 @@ public Class User {
     }
 
     public String getPassword(){
-        return password
+        return password;
     }
 
     public void setEmail(String email){
