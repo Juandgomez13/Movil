@@ -1,0 +1,963 @@
+{
+	"info": {
+		"_postman_id": "movil-api-crud-tests",
+		"name": "Movil API - CRUD Tests",
+		"description": "Colección completa de pruebas CRUD para todas las entidades de la aplicación Movil",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subcategory_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "product_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Login successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', responseData.token);",
+									"    console.log('JWT Token set:', responseData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Login - Coordinador",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Login successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', responseData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"coordinador\",\n    \"password\": \"coord123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "👤 Users CRUD",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User created successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('user_id', responseData.id);",
+									"    console.log('User ID set:', responseData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"test_user_{{$timestamp}}\",\n    \"password\": \"password123\",\n    \"email\": \"test{{$timestamp}}@example.com\",\n    \"role\": \"COORDINADOR\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all users successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users"]
+						}
+					}
+				},
+				{
+					"name": "Get User by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get user by ID successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('User has required fields', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('id');",
+									"    pm.expect(responseData).to.have.property('username');",
+									"    pm.expect(responseData).to.have.property('email');",
+									"    pm.expect(responseData).to.have.property('role');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User updated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Updated user has new email', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.email).to.include('updated');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"updated_user_{{$timestamp}}\",\n    \"password\": \"newpassword123\",\n    \"email\": \"updated{{$timestamp}}@example.com\",\n    \"role\": \"COORDINADOR\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Deactivate User (Update active = false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User deactivated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('User is inactive', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.active).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"updated_user_{{$timestamp}}\",\n    \"password\": \"newpassword123\",\n    \"email\": \"updated{{$timestamp}}@example.com\",\n    \"role\": \"COORDINADOR\",\n    \"active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('User deleted successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Delete confirmation message received', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📂 Categories CRUD",
+			"item": [
+				{
+					"name": "Create Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Category created successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('category_id', responseData.id);",
+									"    console.log('Category ID set:', responseData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Category {{$timestamp}}\",\n    \"description\": \"Descripción de prueba para categoría\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Get All Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all categories successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/categories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories"]
+						}
+					}
+				},
+				{
+					"name": "Update Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Category updated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Updated category has new name', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.name).to.include('Updated');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Category {{$timestamp}}\",\n    \"description\": \"Descripción actualizada de la categoría\",\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Deactivate Category (Update active = false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Category deactivated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Category is inactive', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.active).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Category {{$timestamp}}\",\n    \"description\": \"Descripción actualizada de la categoría\",\n    \"active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Category deleted successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Delete confirmation message received', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/categories/{{category_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "categories", "{{category_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📋 Subcategories CRUD",
+			"item": [
+				{
+					"name": "Create Subcategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Subcategory created successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('subcategory_id', responseData.id);",
+									"    console.log('Subcategory ID set:', responseData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Subcategory {{$timestamp}}\",\n    \"description\": \"Descripción de prueba para subcategoría\",\n    \"active\": true,\n    \"category\": {\n        \"id\": {{category_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subcategories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories"]
+						}
+					}
+				},
+				{
+					"name": "Get All Subcategories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all subcategories successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/subcategories",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories"]
+						}
+					}
+				},
+				{
+					"name": "Get Subcategory by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get subcategory by ID successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Subcategory has required fields', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('id');",
+									"    pm.expect(responseData).to.have.property('name');",
+									"    pm.expect(responseData).to.have.property('description');",
+									"    pm.expect(responseData).to.have.property('active');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/subcategories/{{subcategory_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories", "{{subcategory_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Subcategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Subcategory updated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Updated subcategory has new name', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.name).to.include('Updated');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Subcategory {{$timestamp}}\",\n    \"description\": \"Descripción actualizada de la subcategoría\",\n    \"active\": true,\n    \"category\": {\n        \"id\": {{category_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subcategories/{{subcategory_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories", "{{subcategory_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Deactivate Subcategory (Update active = false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Subcategory deactivated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Subcategory is inactive', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.active).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Subcategory {{$timestamp}}\",\n    \"description\": \"Descripción actualizada de la subcategoría\",\n    \"active\": false,\n    \"category\": {\n        \"id\": {{category_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/subcategories/{{subcategory_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories", "{{subcategory_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Subcategory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Subcategory deleted successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Delete confirmation message received', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/subcategories/{{subcategory_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "subcategories", "{{subcategory_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "📦 Products CRUD",
+			"item": [
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Product created successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    const responseData = pm.response.json();",
+									"    pm.collectionVariables.set('product_id', responseData.id);",
+									"    console.log('Product ID set:', responseData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Product {{$timestamp}}\",\n    \"description\": \"Descripción de prueba para producto\",\n    \"price\": 99.99,\n    \"stock\": 100,\n    \"active\": true,\n    \"category\": {\n        \"id\": {{category_id}}\n    },\n    \"subcategory\": {\n        \"id\": {{subcategory_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Get All Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get all products successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    pm.expect(pm.response.json()).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Get Product by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Get product by ID successful', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Product has required fields', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('id');",
+									"    pm.expect(responseData).to.have.property('name');",
+									"    pm.expect(responseData).to.have.property('price');",
+									"    pm.expect(responseData).to.have.property('stock');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "{{product_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Product updated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Updated product has new name', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.name).to.include('Updated');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Product {{$timestamp}}\",\n    \"description\": \"Descripción actualizada del producto\",\n    \"price\": 149.99,\n    \"stock\": 150,\n    \"active\": true,\n    \"category\": {\n        \"id\": {{category_id}}\n    },\n    \"subcategory\": {\n        \"id\": {{subcategory_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "{{product_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Deactivate Product (Update active = false)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Product deactivated successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Product is inactive', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData.active).to.be.false;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Product {{$timestamp}}\",\n    \"description\": \"Descripción actualizada del producto\",\n    \"price\": 149.99,\n    \"stock\": 150,\n    \"active\": false,\n    \"category\": {\n        \"id\": {{category_id}}\n    },\n    \"subcategory\": {\n        \"id\": {{subcategory_id}}\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "{{product_id}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Product deleted successfully', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Delete confirmation message received', function () {",
+									"    const responseData = pm.response.json();",
+									"    pm.expect(responseData).to.have.property('message');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/products/{{product_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "products", "{{product_id}}"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
