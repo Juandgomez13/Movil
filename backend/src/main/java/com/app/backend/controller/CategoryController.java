@@ -26,6 +26,12 @@ public class CategoryController {
     getAllCategories() {
         return ResponseEntity.ok(categoryService.findAll());
     }
+
+        @GetMapping("/{id}")
+        @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
+        public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+            return ResponseEntity.ok(categoryService.findById(id));
+        }
     
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")

@@ -1,6 +1,8 @@
 package com.app.backend.service;
 
 import com.app.backend.model.Subcategory;
+import com.app.backend.model.Category;
+import com.app.backend.dto.SubcategoryRequest;
 import com.app.backend.repository.SubcategoryRepository;
 import com.app.backend.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,30 @@ public class SubCategoryService {
         return subcategoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Subcategoria no encontrada"));
     }
 
-    public Subcategory create(Subcategory subcategory){
+    public Subcategory create(SubcategoryRequest request){
+        Category category = categoryRepository.findById(request.getCategoryId())
+            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        
+        Subcategory subcategory = new Subcategory();
+        subcategory.setName(request.getName());
+        subcategory.setDescription(request.getDescription());
+        subcategory.setCategory(category);
+        subcategory.setActive(true);
+        
         return subcategoryRepository.save(subcategory);
     }
 
-    public Subcategory update(Long id, Subcategory subcategoryDetails){
+    public Subcategory update(Long id, SubcategoryRequest request){
         Subcategory subcategory = findById(id);
-        subcategory.setName(subcategoryDetails.getName());
-        subcategory.setDescription(subcategoryDetails.getDescription());
-        subcategory.setActive(subcategoryDetails.getActive());
-        subcategory.setCategory(subcategoryDetails.getCategory());
+        
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+            subcategory.setCategory(category);
+        }
+        
+        if (request.getName() != null) subcategory.setName(request.getName());
+        if (request.getDescription() != null) subcategory.setDescription(request.getDescription());
 
         return subcategoryRepository.save(subcategory);
     }

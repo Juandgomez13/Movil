@@ -2,6 +2,7 @@ com\app\backend\model\User.class
 com\app\backend\service\CategoryService.class
 com\app\backend\BackendApplication.class
 com\app\backend\config\WebConfig.class
+com\app\backend\dto\SubcategoryRequest.class
 com\app\backend\config\DataInitializer.class
 com\app\backend\controller\ProductController.class
 com\app\backend\controller\SubcategoryController.class
@@ -19,6 +20,7 @@ com\app\backend\service\SubCategoryService.class
 com\app\backend\repository\ProductRepository.class
 com\app\backend\security\JwtAuthenticationFilter.class
 com\app\backend\controller\StatsController.class
+com\app\backend\dto\ProductRequest.class
 com\app\backend\dto\UserCreateRequest.class
 com\app\backend\model\User$Role.class
 com\app\backend\security\JwtTokenProvider.class

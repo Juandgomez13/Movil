@@ -1,6 +1,7 @@
 package com.app.backend.controller;
 
 import com.app.backend.model.Subcategory;
+import com.app.backend.dto.SubcategoryRequest;
 import com.app.backend.service.SubCategoryService;
 import com.app.backend.dto.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +42,16 @@ public class SubcategoryController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
     public ResponseEntity<Subcategory> createSubcategory
-    (@RequestBody Subcategory subcategory) {
-        return ResponseEntity.ok(subcategoryService.create(subcategory));
+    (@RequestBody SubcategoryRequest request) {
+        return ResponseEntity.ok(subcategoryService.create(request));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
     public ResponseEntity<Subcategory> updateSubcategory(
         @PathVariable Long id,
-        @RequestBody Subcategory subcategory){
-        return ResponseEntity.ok(subcategoryService.update(id, subcategory));
+        @RequestBody SubcategoryRequest request){
+        return ResponseEntity.ok(subcategoryService.update(id, request));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

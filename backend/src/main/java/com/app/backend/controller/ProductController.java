@@ -1,6 +1,7 @@
 package com.app.backend.controller;
 
 import com.app.backend.model.Product;
+import com.app.backend.dto.ProductRequest;
 import com.app.backend.service.ProductService;
 import com.app.backend.dto.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +47,16 @@ public class ProductController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
     public ResponseEntity<Product> createProduct
-    (@RequestBody Product product) {
-        return ResponseEntity.ok(productService.create(product));
+    (@RequestBody ProductRequest request) {
+        return ResponseEntity.ok(productService.create(request));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
     public ResponseEntity<Product> updateProduct(
         @PathVariable Long id,
-        @RequestBody Product product){
-        return ResponseEntity.ok(productService.update(id, product));
+        @RequestBody ProductRequest request){
+        return ResponseEntity.ok(productService.update(id, request));
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
