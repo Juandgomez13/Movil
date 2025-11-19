@@ -15,12 +15,18 @@ import java.util.List;
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "*")
 public class ProductController {
+        @DeleteMapping(value = "/{id}/hard", produces = MediaType.APPLICATION_JSON_VALUE)
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<MessageResponse> hardDeleteProduct(@PathVariable Long id){
+            productService.hardDelete(id);
+            return ResponseEntity.ok(new MessageResponse("Producto eliminado permanentemente"));
+        }
     
     @Autowired
     private ProductService productService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_COORDINADOR')")
     public ResponseEntity<List<Product>>
     getAllProducts() {
         return ResponseEntity.ok(productService.findAll());

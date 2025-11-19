@@ -16,12 +16,23 @@ import javax.print.attribute.standard.Media;
 @RequestMapping("/api/subcategories")
 @CrossOrigin(origins = "*")
 public class SubcategoryController {
+            @GetMapping("/all")
+            @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
+            public ResponseEntity<List<Subcategory>> getAllSubcategoriesWithInactive() {
+                return ResponseEntity.ok(subcategoryService.findAllWithInactive());
+            }
+        @DeleteMapping(value = "/{id}/hard", produces = MediaType.APPLICATION_JSON_VALUE)
+        @PreAuthorize("hasRole('ADMIN')")
+        public ResponseEntity<MessageResponse> hardDeleteSubcategory(@PathVariable Long id){
+            subcategoryService.hardDelete(id);
+            return ResponseEntity.ok(new MessageResponse("Subcategoria eliminada permanentemente"));
+        }
     
     @Autowired
     private SubCategoryService subcategoryService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'COORDINADOR')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_COORDINADOR')")
     public ResponseEntity<List<Subcategory>>
     getAllSubcategories() {
         return ResponseEntity.ok(subcategoryService.findAll());

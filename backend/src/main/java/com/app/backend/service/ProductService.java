@@ -13,6 +13,10 @@ import java.util.List;
 
 @Service
 public class ProductService {
+        public void hardDelete(Long id) {
+            Product product = findById(id);
+            productRepository.delete(product);
+        }
     @Autowired
     private ProductRepository productRepository;
     
@@ -82,7 +86,8 @@ public class ProductService {
 
     public void delete(Long id){
         Product product = findById(id);
-        productRepository.delete(product);
+        product.setActive(false);
+        productRepository.save(product);
     }
 
 }

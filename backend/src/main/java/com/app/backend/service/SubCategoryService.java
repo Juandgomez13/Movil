@@ -11,6 +11,13 @@ import java.util.List;
 
 @Service
 public class SubCategoryService {
+            public List<Subcategory> findAllWithInactive(){
+                return subcategoryRepository.findAll();
+            }
+        public void hardDelete(Long id) {
+            Subcategory subcategory = findById(id);
+            subcategoryRepository.delete(subcategory);
+        }
     @Autowired
     private SubcategoryRepository subcategoryRepository;
 
@@ -33,7 +40,7 @@ public class SubCategoryService {
         subcategory.setName(request.getName());
         subcategory.setDescription(request.getDescription());
         subcategory.setCategory(category);
-        subcategory.setActive(true);
+        subcategory.setActive(request.getActive());
         
         return subcategoryRepository.save(subcategory);
     }
@@ -49,16 +56,18 @@ public class SubCategoryService {
         
         if (request.getName() != null) subcategory.setName(request.getName());
         if (request.getDescription() != null) subcategory.setDescription(request.getDescription());
+        if (request.getActive() != null) subcategory.setActive(request.getActive());
 
         return subcategoryRepository.save(subcategory);
     }
 
     public void delete(Long id){
         Subcategory subcategory = findById(id);
-        subcategoryRepository.delete(subcategory);
+        subcategory.setActive(false);
+        subcategoryRepository.save(subcategory);
     }
 
     public List<Subcategory> findByCategoryId(Long categoryId){
-        return subcategoryRepository.findByCategoryId(categoryId);
+        return subcategoryRepository.findByCategoryIdAndActiveTrue(categoryId);
     }
 }
