@@ -84,7 +84,7 @@ export default function CategoriesScreen() {
         ]);
     };
 
-    const handleToggleActive = async (item: any) => {
+    const handleToggleAttive = async (item: any) => {
         const action = item.active ? 'desactivar' : 'activar';
         Alert.alert('Confirmar' , `¿${action.charAt(0).toUpperCase() + action.slice(1)} ${item.name}?`, [
             { text: "Cancelar", style: "cancel" },
@@ -127,16 +127,18 @@ export default function CategoriesScreen() {
                     <Text style={[categoriesStyles.actionButtonText, categoriesStyles.editButtonText]}>Editar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[categoriesStyles.actionButton, categoriesStyles.toggleButton]} onPress={() => handleToggleActive(item)}>
+                <TouchableOpacity style={[categoriesStyles.actionButton, categoriesStyles.toggleButton]} onPress={() => handleToggleAttive(item)}>
                     <Text style={[categoriesStyles.actionButtonText, categoriesStyles.toggleButtonText]}>
                     {item.active ? 'Desactivar' : 'Activar'}
                 </Text>
                 </TouchableOpacity>
-                {currentUser?.role === 'ADMIN' && (
+                <TouchableOpacity>
+                    {currentUser?.role !== 'ADMIN' && (
                     <TouchableOpacity style={[categoriesStyles.actionButton, categoriesStyles.deleteButton]} onPress={() => handleDelete(item)}>
                         <Text style={[categoriesStyles.actionButtonText, categoriesStyles.deleteButtonText]}>Eliminar</Text>
                     </TouchableOpacity>
-                )}
+                    )}
+                </TouchableOpacity>
             </View>
         </View>
     );
