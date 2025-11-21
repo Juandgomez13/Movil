@@ -31,11 +31,11 @@ public class ProductService {
     }
 
     public List<Product> findByCategoryId(Long categoryId){
-        return productRepository.findBySubcategoryId(categoryId);
+        return productRepository.findByCategoryIdAndActiveTrue(categoryId);
     }
 
     public List<Product> findBySubcategoryId(Long subcategoryId){
-        return productRepository.findBySubcategoryId(subcategoryId);
+        return productRepository.findBySubcategoryIdAndActiveTrue(subcategoryId);
     }
     public Product findById(Long id){
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
